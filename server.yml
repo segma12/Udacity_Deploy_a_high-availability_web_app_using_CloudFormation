@@ -139,7 +139,7 @@ Resources:
           systemctl start apache2.service
           cd /var/www/html
           mv /var/www/html/index.html /var/www/html/index_old.html
-          echo "Udacity Demo Web Server Up and Running!" > index.html
+          echo "Udacity Demo Web Server Up and Working well!" > index.html
       ImageId: ami-052efd3df9dad4825 #The image must be suitable to the region
       SecurityGroups:
       - Ref: WebServerSecurityGroup
@@ -201,7 +201,7 @@ Resources:
       ListenerArn: !Ref Listener
       Priority: 1
 
-  Outputs:
+Outputs:
   LoadBalancerURL:
     Description: The public url to load balancer
     Value: !Join [ "", ["http://" , !GetAtt LoadBalancer.DNSName ]]
