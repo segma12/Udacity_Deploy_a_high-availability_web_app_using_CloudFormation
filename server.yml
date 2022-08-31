@@ -200,3 +200,8 @@ Resources:
           Values: [/]
       ListenerArn: !Ref Listener
       Priority: 1
+
+  Outputs:
+  LoadBalancerURL:
+    Description: The public url to load balancer
+    Value: !Join [ "", ["http://" , !GetAtt LoadBalancer.DNSName ]]
