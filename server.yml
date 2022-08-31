@@ -149,4 +149,54 @@ Resources:
         Ebs:
           VolumeSize: '10'
 
-  
+  WebServerGroup: 
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties: 
+      VPCZoneIdentifier:
+      - Fn::ImportValue:
+          !Sub "${EnvironmentName}-PRIV-NETS"
+      LaunchConfigurationName: 
+        Ref: WebServerLaunchConfig
+      MinSize: "4"
+      MaxSize: "4"
+      TargetGroupARNs:
+      - Ref: WebServerTargetGroup    
+
+  # Evaluate machines healthy checks
+  WebServerTargetGroup: 
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 8
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId:
+        Fn::ImportValue:
+          Fn::Sub: "${EnvironmentName}-VPCID"    
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      -   Type: forward
+          TargetGroupArn: 
+              Ref: WebServerTargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  ApplicationLoadBalancerListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+      -   Type: forward
+          TargetGroupArn: !Ref WebServerTargetGroup
+      Conditions:
+      -   Field: path-pattern
+          Values: [/]
+      ListenerArn: !Ref Listener
+      Priority: 1
