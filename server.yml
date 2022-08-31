@@ -1,0 +1,39 @@
+Description: >
+    Hisham Magdy / Deploy a high-availability web app using CloudFormation
+
+Parameters:
+
+  EnvironmentName:
+    Description: An Environment name that will be prefixed to resources
+    Type: String
+
+  BucketName:
+    Type: String
+    Description: Bucket Name
+    Default: udacitycloudformationbucket
+
+Resources:
+
+  #S3 Bucket Role + IAM User
+  RootRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'ec2.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: 'root'
+          PolicyDocument:
+            Statement:
+              - Effect: 'Allow'
+                Action: '*'
+                Resource: '*'
+
+
+  
